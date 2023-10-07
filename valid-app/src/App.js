@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import style from "./App.module.css";
 
 const sendFormData = (registrationData) => {
@@ -6,10 +6,6 @@ const sendFormData = (registrationData) => {
 };
 
 function App() {
-  // const [login, setLogin] = useState('');
-  // const [password, setPassword] = useState('');
-  // const [repeatPassword, setRepeatPassword] = useState('');
-
   const [formData, setFormData] = useState({
     login: "",
     password: "",
@@ -25,6 +21,8 @@ function App() {
   const { login, password, repeatPassword } = formData;
 
   const { loginError, passwordError, repeatPasswordError } = errorFormData;
+
+  const submitButtonRef = useRef(null);
 
   const onSubmit = (evt) => {
     evt.preventDefault();
@@ -64,6 +62,8 @@ function App() {
     } else if (!/^[a-zA-Z0-9]+$/.test(target.value)) {
       newPasswordError =
         "Неверный пароль. Допустимые символы: латинские буквы и цифры";
+    } else if (target.value.length === 0) {
+      newPasswordError = "Неверный пароль. Поле не должно быть пустым";
     }
 
     setErrorFormData({
@@ -83,20 +83,28 @@ function App() {
 
     setErrorFormData({
       repeatPasswordError: newRepeatPasswordError,
-    })
-  }
+    });
 
+    setTimeout(() => {
+      if (!newRepeatPasswordError && !passwordError) {
+        submitButtonRef.current.focus();
+      }
+    }, 0);
+  };
 
   return (
     <div className={style.app}>
       <header className={style.appHeader}>
-        <form onSubmit={onSubmit}>
+        <form onSubmit={onSubmit} className={style.form}>
           {loginError && <div className={style.errorLabel}>{loginError}</div>}
           {passwordError && (
             <div className={style.errorLabel}>{passwordError}</div>
           )}
-          {repeatPasswordError && <div className={style.errorLabel}>{repeatPasswordError}</div>}
+          {repeatPasswordError && (
+            <div className={style.errorLabel}>{repeatPasswordError}</div>
+          )}
           <input
+            className={style.input}
             type="text"
             placeholder="Введите ваш логин"
             value={login}
@@ -104,6 +112,7 @@ function App() {
           />
 
           <input
+            className={style.input}
             type="password"
             placeholder="Введите ваш пароль"
             value={password}
@@ -111,6 +120,7 @@ function App() {
           />
 
           <input
+            className={style.input}
             type="password"
             placeholder="Повторите ваш пароль"
             value={repeatPassword}
@@ -118,10 +128,10 @@ function App() {
           />
 
           <button
+          className={style.buttonSubmit}
+            ref={submitButtonRef}
             type="submit"
-            disabled={
-              (!!loginError || !!passwordError || !!repeatPasswordError)
-            }
+            disabled={!!loginError || !!passwordError || !!repeatPasswordError}
           >
             Зарегистрироваться
           </button>
