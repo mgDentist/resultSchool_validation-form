@@ -39,9 +39,11 @@ function App() {
     let newLoginError = null;
     if (!/^[\w_]*$/.test(target.value)) {
       newLoginError =
-        "Неверный логин. Допустимые символы: буквы, цифры и нижнее подчёркивание";
+        "Неверный логин. Допустимые символы: латинские буквы, цифры и нижнее подчёркивание";
     } else if (target.value.length > 20) {
       newLoginError = "Неверный логин. Должно быть не больше 20 символов";
+    } else if (target.value.length < 3) {
+      newLoginError = "Неверный логин. Должно быть не меньше 3 символов";
     }
 
     setErrorFormData({
@@ -54,13 +56,46 @@ function App() {
       ...formData,
       password: target.value,
     });
+    let newPasswordError = null;
+    if (target.value.length < 6) {
+      newPasswordError = "Неверный пароль. Должно быть не меньше 6 символов";
+    } else if (target.value.length > 20) {
+      newPasswordError = "Неверный пароль. Должно быть не больше 20 символов";
+    } else if (!/^[a-zA-Z0-9]+$/.test(target.value)) {
+      newPasswordError =
+        "Неверный пароль. Допустимые символы: латинские буквы и цифры";
+    }
+
+    setErrorFormData({
+      passwordError: newPasswordError,
+    });
   };
+
+  const onRepeatPasswordChange = ({ target }) => {
+    setFormData({
+      ...formData,
+      repeatPassword: target.value,
+    });
+    let newRepeatPasswordError = null;
+    if (target.value !== formData.password) {
+      newRepeatPasswordError = "Пароли не совпадают";
+    }
+
+    setErrorFormData({
+      repeatPasswordError: newRepeatPasswordError,
+    })
+  }
+
 
   return (
     <div className={style.app}>
       <header className={style.appHeader}>
         <form onSubmit={onSubmit}>
           {loginError && <div className={style.errorLabel}>{loginError}</div>}
+          {passwordError && (
+            <div className={style.errorLabel}>{passwordError}</div>
+          )}
+          {repeatPasswordError && <div className={style.errorLabel}>{repeatPasswordError}</div>}
           <input
             type="text"
             placeholder="Введите ваш логин"
@@ -72,27 +107,22 @@ function App() {
             type="password"
             placeholder="Введите ваш пароль"
             value={password}
-            onChange={({ target }) => {
-              setFormData({
-                ...formData,
-                password: target.value,
-              });
-            }}
+            onChange={onPasswordChange}
           />
 
           <input
             type="password"
             placeholder="Повторите ваш пароль"
             value={repeatPassword}
-            onChange={({ target }) => {
-              setFormData({
-                ...formData,
-                repeatPassword: target.value,
-              });
-            }}
+            onChange={onRepeatPasswordChange}
           />
 
-          <button type="submit" disabled={!!loginError}>
+          <button
+            type="submit"
+            disabled={
+              (!!loginError || !!passwordError || !!repeatPasswordError)
+            }
+          >
             Зарегистрироваться
           </button>
         </form>
