@@ -131,7 +131,7 @@ function App() {
           className={style.buttonSubmit}
             ref={submitButtonRef}
             type="submit"
-            disabled={!!loginError || !!passwordError || !!repeatPasswordError}
+            disabled={!!loginError || (!!passwordError || !password) || (!!repeatPasswordError || !repeatPassword)}
           >
             Зарегистрироваться
           </button>
