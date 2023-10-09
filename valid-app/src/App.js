@@ -105,6 +105,7 @@ function App() {
           )}
           <input
             className={style.input}
+            name="login"
             type="text"
             placeholder="Введите ваш логин"
             value={login}
@@ -113,6 +114,7 @@ function App() {
 
           <input
             className={style.input}
+            name="password"
             type="password"
             placeholder="Введите ваш пароль"
             value={password}
@@ -121,6 +123,7 @@ function App() {
 
           <input
             className={style.input}
+            name="repeatPassword"
             type="password"
             placeholder="Повторите ваш пароль"
             value={repeatPassword}
